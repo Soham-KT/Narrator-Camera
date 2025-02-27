@@ -2,12 +2,13 @@ import cv2
 import time
 import base64
 import threading
-from llm_api import FrameAPI
+from llm_api import FrameAPI, PersonalityAPI
 
 cap = cv2.VideoCapture(0)
 frame = None
 lock = threading.Lock()
 image_api = FrameAPI()
+personality_api = PersonalityAPI()
 
 def send_frame():
     global frame
@@ -17,7 +18,9 @@ def send_frame():
             if frame is not None:
                 encoded_frame = base64.b64encode(cv2.imencode('.jpeg', frame)[1]).decode()
         description = image_api.get_image_description(encoded_frame)
-        print(description)
+
+        new_description = personality_api.get_personality_description(description)
+        print(new_description)
 
 # Start the API thread
 threading.Thread(target=send_frame, daemon=True).start()

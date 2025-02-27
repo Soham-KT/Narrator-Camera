@@ -30,3 +30,25 @@ class FrameAPI:
             temperature=temperature,
         )
         return completion.choices[0].message.content
+    
+
+# Class to get personality description
+class PersonalityAPI:
+    def __init__(self, max_context_length=50):
+        self.client = client
+        self.prev_context = ""
+        self.max_context_length = max_context_length
+
+    def get_personality_description(self, curr_context, temperature=0.7):
+        self.prev_context = (self.prev_context + " " + curr_context).strip()[-self.max_context_length:]
+
+        completion = self.client.chat.completions.create(
+            model="dolphin3.0-llama3.1-8b",
+            messages=[
+                {"role": "system", "content": "talk like Deadpool and keep it under 50 words"},
+                {"role": "user", "content": f"Describe this sentence in flow with the previous context but do not include the previous context.\nPrevious context: {self.prev_context}\nCurrent context: {curr_context}"}
+            ],
+            temperature=temperature,
+        )
+
+        return completion.choices[0].message.content
