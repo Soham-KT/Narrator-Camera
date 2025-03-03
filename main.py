@@ -3,6 +3,7 @@ import time
 import base64
 import threading
 from llm_api import FrameAPI, PersonalityAPI
+from text_to_speech import tts_llm
 
 cap = cv2.VideoCapture(0)
 frame = None
@@ -21,6 +22,7 @@ def send_frame():
 
         new_description = personality_api.get_personality_description(description)
         print(new_description)
+        tts_llm(new_description)
 
 # Start the API thread
 threading.Thread(target=send_frame, daemon=True).start()
